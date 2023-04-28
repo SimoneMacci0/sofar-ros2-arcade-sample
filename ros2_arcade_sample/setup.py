@@ -13,6 +13,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join("share", package_name, "resource"), glob("resource/*.png")),
         (os.path.join("share", package_name, "launch"), glob("launch/*.launch.py"))
     ],
     install_requires=['setuptools'],
@@ -25,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'sim_node = ros2_arcade_sample.sim_node:main',
+            'controller = ros2_arcade_sample.position_controller:main',
         ],
     },
 )
