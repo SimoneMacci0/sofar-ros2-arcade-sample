@@ -84,7 +84,7 @@ def main():
     rclpy.init(args = None)
 
     controller = PositionController()
-    time.sleep(1)
+    time.sleep(10)
     controller.set_new_target()
 
     rclpy.spin(controller)

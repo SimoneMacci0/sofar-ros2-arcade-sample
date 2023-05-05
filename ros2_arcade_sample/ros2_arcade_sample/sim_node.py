@@ -10,6 +10,8 @@ from .lib.simulation import ROS2ArcadeSim
 
 from geometry_msgs.msg import Twist, Pose2D
 
+from ros2_arcade_sample_interface2.srv import Draw
+
 
 # ROS2 node class wrapping arcade simulation for external control
 class ROS2ArcadeSimNode(Node):
@@ -33,6 +35,12 @@ class ROS2ArcadeSimNode(Node):
         # Timer for robot pose publication
         self.pose_timer = self.create_timer(0.01, self.timer_callback)
 
+        self.drawing_srv = self.create_service(Draw, "/draw", self.drawing_callback)
+
+    def drawing_callback(self, request: Draw.Request, response: Draw.Response):
+        self.sim.is_drawing = request.mode.data
+        response.status.data = self.sim.is_drawing
+        return response
 
     # Callback called on receiving velocity commands
     def twist_callback(self, msg: Twist):
