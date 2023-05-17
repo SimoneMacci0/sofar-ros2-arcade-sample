@@ -13,9 +13,10 @@ def generate_launch_description():
             package='ros2_arcade_sample',
             executable='controller',
             name='controller',
-            parameters=[
-                {'goal_x': 650},
-                {'goal_y': 450}
-            ],
+        ),
+        Node(
+            package='ros2_arcade_sample',
+            executable='waypoints_server',
+            name='waypoints_server',
         ),
     ])

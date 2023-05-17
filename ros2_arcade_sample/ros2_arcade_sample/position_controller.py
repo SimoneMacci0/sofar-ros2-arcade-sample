@@ -3,7 +3,8 @@ import rclpy
 import math
 import time
 
-from geometry_msgs.msg import Twist, Pose2D
+from std_msgs.msg import Bool
+from geometry_msgs.msg import Twist, Pose2D, Point
 
 class PositionController(Node):
 
@@ -12,7 +13,7 @@ class PositionController(Node):
 
         # Variables
         self.pose = None
-        self.threshold = 2.0
+        self.threshold = 5.0
 
         # Utilities
         self.starting_pose = None
@@ -23,10 +24,17 @@ class PositionController(Node):
         self.Kl = 0.015
         self.Ka = 4.0
 
-        # Pub and sub
+        # subscribers
+        self.goal_sub = self.create_subscription(Point, "/goal", self.on_new_goal_received, 10)
         self.pose_sub = self.create_subscription(Pose2D, "/robot_pose", self.on_pose_received, 10)
+
+        # Publishers
+        self.ack_pub = self.create_publisher(Bool, "/ack", 10)
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
 
+    # Callback for setting new goal for conttroller
+    def on_new_goal_received(self, msg: Point):
+        self.set_new_target(msg.x, msg.y)
 
     # Pose callback
     def on_pose_received(self, msg: Pose2D):
@@ -36,16 +44,13 @@ class PositionController(Node):
             self.starting_pose = msg
             self.got_first_pose = True
 
-
     # Set new goal for controller
-    def set_new_target(self):
+    def set_new_target(self, x: float, y: float):
 
-        self.goal_x = 500
-        self.goal_y = 500
-
+        self.goal_x = x
+        self.goal_y = y
         # Start control timer
         self.control_loop_timer = self.create_timer(0.02, self.on_control_loop)
-
 
     # Control loop callback
     def on_control_loop(self):
@@ -59,12 +64,14 @@ class PositionController(Node):
         elif e_a < -math.pi:
             e_a += 2*math.pi 
 
-        self.get_logger().info("Remaining distance to goal: {0}".format(e_d))
         # exit loop if goal reached
         if e_d <= self.threshold:
             # cancel timer
             self.control_loop_timer.cancel()
-            self.get_logger().info("Goal Reached!")
+            # Publish ack msg
+            ack = Bool()
+            ack.data = True
+            self.ack_pub.publish(ack)
             return
            
         # Compute control inputs
@@ -84,8 +91,8 @@ def main():
     rclpy.init(args = None)
 
     controller = PositionController()
-    time.sleep(10)
-    controller.set_new_target()
+    #time.sleep(10)
+    #controller.set_new_target()
 
     rclpy.spin(controller)
 

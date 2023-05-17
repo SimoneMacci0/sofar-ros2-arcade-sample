@@ -27,6 +27,7 @@ setup(
         'console_scripts': [
             'sim_node = ros2_arcade_sample.sim_node:main',
             'controller = ros2_arcade_sample.position_controller:main',
+            'waypoints_server = ros2_arcade_sample.waypoints_server:main'
         ],
     },
 )

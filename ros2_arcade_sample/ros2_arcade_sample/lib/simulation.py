@@ -35,8 +35,8 @@ class ROS2ArcadeSim(arcade.Window):
 
     # Setup method invoked at game start
     def setup(self):
-        self.robot.center_x = SCREEN_WIDTH / 4
-        self.robot.center_y = SCREEN_HEIGHT / 4
+        self.robot.center_x = 100.0
+        self.robot.center_y = 100.0
         self.points_list = arcade.SpriteList(use_spatial_hash=True)
 
     # Draw robot on map every frame

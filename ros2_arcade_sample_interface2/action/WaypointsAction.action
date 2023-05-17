@@ -1,0 +1,6 @@
+geometry_msgs/Point[] waypoints
+---
+std_msgs/Bool done
+---
+std_msgs/Int64 remaining
+std_msgs/Float32 dist_to_waypoint
